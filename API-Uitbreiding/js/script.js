@@ -2,7 +2,7 @@
 	"use strict";
 	/*jslint browser: true*/
 	/*jslint devel: true*/
-	let apiAddress = "http://localhost/wm/les2/api.php?";
+	let apiAddress = "http://localhost/wm/api.php?";
 	let alertEl = document.getElementById("alert");
 	let opties = {
 		method: "POST", // *GET, POST, PUT, DELETE, etc.
@@ -167,6 +167,43 @@
 			});
 	}
 
+	function setAPIProduct() {
+		// een ONVEILIGE manier om gebruikersgegevens te testen
+    
+		let url = apiAddress + "m=createAndGetProduct";
+		// onze php api verwacht een paar parameters
+		// we voegen deze toe aan de body van de opties
+    
+		// body data type must match "Content-Type" header
+		opties.body = JSON.stringify({
+			prodOmschr: document.getElementById("prodOmschr").value,
+			prodPrijs: document.getElementById("prodPrijs").value,
+			format: "json"
+		}); 
+		
+		// test de api
+		fetch(url, opties)
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(responseData){
+
+				var list = responseData.data;
+
+				// er zit minstens 1 item in list, we geven dit ook onmiddelijk weer
+				var tLijst = "<span class='rij kOdd'><span>ID</span><span>Omschrijving</span><span>Prijs</span></span>";
+				for (var i = 0; i < list.length; i++) {
+					tLijst += "<span class='rij'><span>" + list[i].id + "</span><span>" + list[i].Omschrijving + "</span><span>" + list[i].prijs + "</span></span>";
+				}
+				tLijst += "<br>";
+				alerter(tLijst);
+			})
+			.catch(function(error) {
+				// verwerk de fout
+				alertEl.innerHTML = "fout : " + error;
+			});
+	}
+
 	// EventListeners
 	document.getElementById("btnTestLogin").addEventListener("click", function(){
 		getApiGebruiker();
@@ -182,6 +219,9 @@
 
 	document.getElementById("btnGetProdSom").addEventListener("click", function(){
 		getApiProductSom();
+	});
+	document.getElementById("btnAddProd").addEventListener("click", function(){
+		setAPIProduct();
 	});
   
 	// helper functies

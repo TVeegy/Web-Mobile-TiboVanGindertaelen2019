@@ -82,7 +82,6 @@ function deliver_response($format, $api_response) {
 
     // Process different content types
     if (strcasecmp($format, 'json') == 0) {
-
         // Set HTTP Response Content Type
         header('Content-Type: application/json; charset=utf-8');
 
@@ -91,9 +90,7 @@ function deliver_response($format, $api_response) {
 
         // Deliver formatted data
         echo $json_response;
-
     } elseif (strcasecmp($format, 'xml') == 0) {
-
         // Set HTTP Response Content Type
         header('Content-Type: application/xml; charset=utf-8');
 
@@ -104,21 +101,16 @@ function deliver_response($format, $api_response) {
         echo $xml_response;
 
     } else {
-
         // Set HTTP Response Content Type (This is only good at handling string data, not arrays)
         header('Content-Type: text/html; charset=utf-8');
 
         // Deliver formatted data
         echo $api_response['data'];
-
     }
 
     // End script process
     exit ;
-
 }
-
-
 
 // security issue : als de m = register, geen login nodig ...
 if (strcasecmp($_GET['m'], 'register') == 0) {
@@ -127,8 +119,6 @@ if (strcasecmp($_GET['m'], 'register') == 0) {
 if (strcasecmp($_GET['m'], 'hello') == 0) {
     $authentication_required = FALSE; // om deze functie te testen is geen login nodig ...
 }
-
-
 
 // --- Step 2: Authorization
 
@@ -152,13 +142,11 @@ if ($authentication_required) {
 
         // Return Response to browser
         deliver_response($postvars['format'], $response);
-
     }
 
     // Return an error response if user fails authentication. This is a very simplistic example
     // that should be modified for security in a production environment
     else {
-
         if (!$conn) {
             $response['code'] = 7;
             $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
@@ -194,13 +182,10 @@ if ($authentication_required) {
                 }
             }
         }
-
     }
-
 }
 
 // --- Step 3: Process Request
-
 
 // Method A: Say Hello to the API
 if (strcasecmp($_GET['m'], 'hello') == 0) {
@@ -270,6 +255,29 @@ if (strcasecmp($_GET['m'], 'getTime') == 0) {
 
 }
 
+// --- som producten
+if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
+
+    if (!$conn) {
+        $response['code'] = 0;
+        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        $response['data'] = mysqli_connect_error();
+
+    } else {
+        $response['code'] = 1;
+        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        // het tijdstip van de server opvragen (volgens de db), zodat we kunnen
+        // synchroniseren met bvb onze eigen app.
+        $sql = 'select Count(*) as productSom FROM producten';
+        $result = $conn -> query($sql);
+        $rows = array();
+        while ($row = $result -> fetch_assoc()) {
+            $rows[] = $row;
+        }
+        $response['data'] = $rows[0];
+    }
+}
+
 // --- productenlijst
 if (strcasecmp($_GET['m'], 'getProducten') == 0) {
 
@@ -298,13 +306,12 @@ if (strcasecmp($_GET['m'], 'getProducten') == 0) {
             $response['code'] = 1;
             $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
             $response['data'] = $rows;
-           
         }
     }
 }
 
-// --- som producten
-if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
+// Create and Get Product
+if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
 
     if (!$conn) {
         $response['code'] = 0;
@@ -312,26 +319,97 @@ if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
         $response['data'] = mysqli_connect_error();
 
     } else {
-        $response['code'] = 1;
+        $response['code'] = 0;
         $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        // het tijdstip van de server opvragen (volgens de db), zodat we kunnen
-        // synchroniseren met bvb onze eigen app.
-        $sql = 'select Count(*) as productSom FROM producten';
-        $result = $conn -> query($sql);
-        $rows = array();
-        while ($row = $result -> fetch_assoc()) {
-            $rows[] = $row;
+        
+        $lQuery = "Insert into Producten (Omschrijving, Prijs) Values ('" . $postvars['prodOmschr'] . "','" . $postvars['prodPrijs'] . "')";
+        if ($conn->query($lQuery) === TRUE) {
+            //wtf("test");
+            //var_dump($response['data']);
+            //console_log_text("test");
         }
-        $response['data'] = $rows[0];
-    }
 
+        $lQuery = "select * FROM producten";
+        $result = $conn -> query($lQuery);
+        $rows = array();
+        if (!$result) {
+            $response['data'] = "db error";
+        } 
+        else {
+            while ($row = $result -> fetch_assoc()) {
+                $rows[] = $row;
+            }
+            $response['code'] = 1;
+            $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+            $response['data'] = $rows;
+        }
+    }
+    
 }
 
 // --- Step 3.99: close the DB connection
 mysqli_close($conn);
-
 // --- Step 4: Deliver Response
 
 // Return Response to browser
 deliver_response($postvars['format'], $response);
+
+
+
+
+// ------------------------------------------------- //
+
+function console_log( $data ){
+    echo '<script>';
+    echo 'console.log('. json_encode( $data ) .')';
+    echo '</script>';
+  }
+
+  function console_log_text( $data ){
+    echo '<script>';
+    echo 'console.log('.$data.')';
+    echo '</script>';
+  }
+function wtf(){
+    error_reporting(E_ALL);
+    $args = func_get_args();
+    $backtrace = debug_backtrace();
+    $file = file($backtrace[0]['file']);
+    $src  = $file[$backtrace[0]['line']-1];  // select debug($varname) line where it has been called
+    $pat  = '#(.*)'.__FUNCTION__.' *?\( *?\$(.*) *?\)(.*)#i';  // search pattern for wtf(parameter)
+    $arguments  = trim(preg_replace($pat, '$2', $src));  // extract arguments pattern
+    $args_arr = array_map('trim', explode(',', $arguments));
+  
+    print '<style>
+    div.debug {visible; clear: both; display: table; width: 100%; font-family: Courier,monospace; border: medium solid red; background-color: yellow; border-spacing: 5px; z-index: 999;}
+    div.debug > div {display: unset; margin: 5px; border-spacing: 5px; padding: 5px;}
+    div.debug .cell {display: inline-flex; padding: 5px; white-space: pre-wrap;}
+    div.debug .left-cell {float: left; background-color: Violet;}
+    div.debug .array {color: RebeccaPurple; background-color: Violet;}
+    div.debug .object pre {color: DodgerBlue; background-color: PowderBlue;}
+    div.debug .variable pre {color: RebeccaPurple; background-color: LightGoldenRodYellow;}
+    div.debug pre {white-space: pre-wrap;}
+    </style>'.PHP_EOL;
+    print '<div class="debug">'.PHP_EOL;
+    foreach ($args as $key => $arg) {
+      print '<div><div class="left-cell cell"><b>';
+      array_walk(debug_backtrace(),create_function('$a,$b','print "{$a[\'function\']}()(".basename($a[\'file\']).":{$a[\'line\']})<br> ";'));
+      print '</b></div>'.PHP_EOL;
+      if (is_array($arg)) {
+        print '<div class="cell array"><b>'.$args_arr[$key].' = </b>';
+        print_r(htmlspecialchars(print_r($arg)), ENT_COMPAT, 'UTF-8');
+        print '</div>'.PHP_EOL;
+      } elseif (is_object($arg)) {
+        print '<div class="cell object"><pre><b>'.$args_arr[$key].' = </b>';
+        print_r(htmlspecialchars(print_r(var_dump($arg))), ENT_COMPAT, 'UTF-8');
+        print '</pre></div>'.PHP_EOL;
+      } else {
+        print '<div class="cell variable"><pre><b>'.$args_arr[$key].' = </b>&gt;';
+        print_r(htmlspecialchars($arg, ENT_COMPAT, 'UTF-8').'&lt;');
+        print '</pre></div>'.PHP_EOL;
+      }
+      print '</div>'.PHP_EOL;
+    }
+    print '</div>'.PHP_EOL;
+  }
 ?>

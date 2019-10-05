@@ -56,7 +56,6 @@
 				} else {
 					alerter("Login failed : this login/password combination does not exist");
 				}
-
 			})
 			.catch(function(error) {
 				// verwerk de fout
@@ -91,12 +90,10 @@
 						tLijst += "<span class='rij'><span>" + list[i].id + "</span><span>" + list[i].Omschrijving + "</span><span>" + list[i].prijs + "</span></span>";
 					}
 					tLijst += "<br>";
-
 					alerter(tLijst);
 				} else {
 					alerter("Servertijd kon niet opgevraagd worden");
 				}
-
 			})
 			.catch(function(error) {
 				// verwerk de fout
@@ -113,7 +110,7 @@
 			format: "json"
 			//, user : "test" // als je de authentication in de api op true zet, heb je dit hier wel nodig 
 			//, password : "test" // als je de authentication in de api op true zet, heb je dit hier wel nodig
-		}); 
+		});
 
 		// test de api
 		fetch(url, opties)
@@ -130,45 +127,45 @@
 				} else {
 					alerter("Servertijd kon niet opgevraagd worden");
 				}
-				
-
 			})
 			.catch(function(error) {
 				// verwerk de fout
 				alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
 			});
-    
-		/*
-		$.ajax({
-			type: "POST",
-			url: apiAddress + "m=getTime",
-			crossDomain: true,
-			data: data,
-			withCredentials: false,
-			success: function(responseData, textStatus, jqXHR) {
+	}
+
+	function getApiProductSom() {
+		// de tijd van de server opvragen en weergeven dmv de alerter functie
+		let url = apiAddress + "m=getProductSom";
+
+		// body data type must match "Content-Type" header
+		opties.body = JSON.stringify({
+			format: "json"
+			//, user : "test" // als je de authentication in de api op true zet, heb je dit hier wel nodig 
+			//, password : "test" // als je de authentication in de api op true zet, heb je dit hier wel nodig
+		});
+
+		// test de api
+		fetch(url, opties)
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(responseData){
+				// de verwerking van de data
 				var list = responseData.data;
-				console.log("resultlist :" + list + " length:" + list.length);
 
 				if (Object.keys(list).length > 0) {
 					// er zit slechts 1 item in de lijst, we geven dit ook onmiddelijk weer
-					console.log("Servertijd :  " + list.servertime);
-					alerter("Servertijd : " + list.servertime);
-
-
+					alerter("Som van producten : " + list.productSom);
 				} else {
-					console.log("Servertime retrieval failed");
-					alerter("Servertijd kon niet opgevraagd worden");
+					alerter("Productensom kon niet opgevraagd worden");
 				}
-
-			},
-			error: function(responseData, textStatus, errorThrown) {
-				console.log("API Failure " + errorThrown);
-				alerter("<br>API Fout. Probeer later nog eens.<br>(" + errorThrown + ")");
-			}
-    });
-    */
+			})
+			.catch(function(error) {
+				// verwerk de fout
+				alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
+			});
 	}
-
 
 	// EventListeners
 	document.getElementById("btnTestLogin").addEventListener("click", function(){
@@ -182,10 +179,13 @@
 	document.getElementById("btnGetProducten").addEventListener("click", function(){
 		getApiProducten();
 	});
+
+	document.getElementById("btnGetProdSom").addEventListener("click", function(){
+		getApiProductSom();
+	});
   
 	// helper functies
 	function alerter(message) {
 		alertEl.innerHTML = message;
 	}
 })();
-

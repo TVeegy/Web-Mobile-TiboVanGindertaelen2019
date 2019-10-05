@@ -303,6 +303,30 @@ if (strcasecmp($_GET['m'], 'getProducten') == 0) {
     }
 }
 
+// --- som producten
+if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
+
+    if (!$conn) {
+        $response['code'] = 0;
+        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        $response['data'] = mysqli_connect_error();
+
+    } else {
+        $response['code'] = 1;
+        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        // het tijdstip van de server opvragen (volgens de db), zodat we kunnen
+        // synchroniseren met bvb onze eigen app.
+        $sql = 'select Count(*) as productSom FROM producten';
+        $result = $conn -> query($sql);
+        $rows = array();
+        while ($row = $result -> fetch_assoc()) {
+            $rows[] = $row;
+        }
+        $response['data'] = $rows[0];
+    }
+
+}
+
 // --- Step 3.99: close the DB connection
 mysqli_close($conn);
 

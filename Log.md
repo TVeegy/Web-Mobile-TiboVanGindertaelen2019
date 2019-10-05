@@ -11,6 +11,7 @@
   * Realiseren dat debugcode het probleem veroorzaakte  
  (echo's voegen toe aan de body van een response -> conversie JSON broken)
 * Research documenteren + Log MD: 1u
+* Versimpelen Code: 2u30
  
 ## TODO
 * Automatisatie optelling uren log (mss alternatief document-type)

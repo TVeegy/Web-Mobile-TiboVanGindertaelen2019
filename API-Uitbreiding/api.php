@@ -198,9 +198,7 @@ if (strcasecmp($_GET['m'], 'hello') == 0) {
 if (strcasecmp($_GET['m'], 'login') == 0) {
 
     if (!$conn) {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = mysqli_connect_error();
+        HandleConnectionFailure($response);
 
     } else {
         $response['code'] = 0;
@@ -235,9 +233,7 @@ if (strcasecmp($_GET['m'], 'login') == 0) {
 if (strcasecmp($_GET['m'], 'getTime') == 0) {
 
     if (!$conn) {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = mysqli_connect_error();
+        HandleConnectionFailure($response);
 
     } else {
         $response['code'] = 1;
@@ -259,9 +255,7 @@ if (strcasecmp($_GET['m'], 'getTime') == 0) {
 if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
 
     if (!$conn) {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = mysqli_connect_error();
+        HandleConnectionFailure($response);
 
     } else {
         $response['code'] = 1;
@@ -282,9 +276,7 @@ if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
 if (strcasecmp($_GET['m'], 'getProducten') == 0) {
 
     if (!$conn) {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = mysqli_connect_error();
+        HandleConnectionFailure($response);
 
     } else {
         $response['code'] = 0;
@@ -314,9 +306,7 @@ if (strcasecmp($_GET['m'], 'getProducten') == 0) {
 if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
 
     if (!$conn) {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = mysqli_connect_error();
+        HandleConnectionFailure($response);
 
     } else {
         $response['code'] = 0;
@@ -342,6 +332,13 @@ if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
     }
     
 }
+
+function HandleConnectionFailure($response){
+    $response['code'] = 0;
+    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+    $response['data'] = mysqli_connect_error();
+}
+
 
 // --- Step 3.99: close the DB connection
 mysqli_close($conn);

@@ -323,11 +323,7 @@ if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
         $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
         
         $lQuery = "Insert into Producten (Omschrijving, Prijs) Values ('" . $postvars['prodOmschr'] . "','" . $postvars['prodPrijs'] . "')";
-        if ($conn->query($lQuery) === TRUE) {
-            //wtf("test");
-            //var_dump($response['data']);
-            //console_log_text("test");
-        }
+        $conn->query($lQuery);
 
         $lQuery = "select * FROM producten";
         $result = $conn -> query($lQuery);

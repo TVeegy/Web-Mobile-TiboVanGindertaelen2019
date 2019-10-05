@@ -9,7 +9,7 @@
  * Dataflow onderzoeken met debugcode
  * Op problemen stoten door onder zoek
  * Realiseren dat debugcode het probleem veroorzaakte
- ( echo's voegen toe aan de body van een response -> conversie JSON broken)
+ \n(echo's voegen toe aan de body van een response -> conversie JSON broken)
  
 ## TODO
 * Automatisatie optelling uren log (mss alternatief document-type)

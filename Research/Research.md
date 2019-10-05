@@ -9,4 +9,4 @@
 * Passing by reference in PHP:
   ** Link: https://www.php.net/manual/en/language.references.pass.php
   ** Code (img):
-  ![Image of Passing By Reference PHP Code](https://github.com/Web-Mobile-TiboVanGindertaelen2019/research/img/PHP_PassingByReference.png)
+  ![Image of Passing By Reference PHP Code](Research/img/PHP_PassingByReference.PNG)

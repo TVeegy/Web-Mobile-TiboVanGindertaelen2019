@@ -26,5 +26,24 @@
     $data();
     }
     ```  
-    Result: 2x "TEST TEST TEST"
+  * Result: 2x "TEST TEST TEST"  
 
+* Declareren van Methoden in Methoden:  
+  * ```php
+    if (!function_exists('IsNull') && !function_exists('IsNotNull')){
+        function IsNull(){
+            
+        }
+        function IsNotNull(){
+            
+        }
+    }
+    ``` 
+  * Link: //https://stackoverflow.com/questions/1953857/fatal-error-cannot-redeclare-function  
+* Opslaan/Callen van Methoden en Coalesce/ternaire operatoren:
+  * ```php
+    ($execute = ($responseData==null)?'IsNull':'IsNotNull')($responseData);
+    ```  
+  * link: https://www.php.net/manual/en/functions.variable-functions.php  
+  * link: https://www.designcise.com/web/tutorial/whats-the-difference-between-null-coalescing-operator-and-ternary-operator-in-php  
+    

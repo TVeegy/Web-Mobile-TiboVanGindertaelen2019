@@ -6,7 +6,7 @@
   ** Link: https://www.php.net/manual/en/debugger.php
   ** Code: zie phpDebuggingExample.php
   
-* Passing by reference in PHP:
-  ** Link: https://www.php.net/manual/en/language.references.pass.php 
+* Passing by reference in PHP:  
+  ** Link: https://www.php.net/manual/en/language.references.pass.php  
   ** Code (img):
   ![Image of Passing By Reference PHP Code](https://github.com/TVeegy/Web-Mobile-TiboVanGindertaelen2019/blob/master/Research/img/PHP_PassingByReference.PNG)

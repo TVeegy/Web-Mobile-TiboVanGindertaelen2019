@@ -3,7 +3,7 @@
 * Voorbereiding lessen : 0u30
   * Installatie XAMPP : 0u30
 
-## Week 2 - 1 uur
+## Week 2 - X uur
 * Afwerking oefening les : 1 uur (Som Producten op Server)
 * Code-sessie: 3u10
  * Dataflow onderzoeken met debugcode
@@ -18,4 +18,4 @@
 * Eigen server in gebruik nemen (Heb al een GoDaddy Account met hosting)
 
 
-# Totale duur : 1.5 uur
+# Totale duur : (0.5+X) uur

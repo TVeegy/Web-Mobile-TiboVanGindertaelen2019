@@ -27,7 +27,7 @@ header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 // Tijdens een volgende les volgt een meer beveiligde, maar iets meer complexe versie van deze API.
 // -------------------------
 
-// --- Step 0 : connect to db
+/* //----------// STEP 0: DB CONNECTION //----------// */
 //require_once "dbcon.php";
 
 // een verbinding leggen met de databank
@@ -37,7 +37,15 @@ $password = "";// dangerous
 $dbname = "test";// standaard test databank
 
 // Define API response codes and their related HTTP response
-$api_response_code = array(0 => array('HTTP Response' => 400, 'Message' => 'Unknown Error'), 1 => array('HTTP Response' => 200, 'Message' => 'Success'), 2 => array('HTTP Response' => 403, 'Message' => 'HTTPS Required'), 3 => array('HTTP Response' => 401, 'Message' => 'Authentication Required'), 4 => array('HTTP Response' => 401, 'Message' => 'Authentication Failed'), 5 => array('HTTP Response' => 404, 'Message' => 'Invalid Request'), 6 => array('HTTP Response' => 400, 'Message' => 'Invalid Response Format'), 7 => array('HTTP Response' => 400, 'Message' => 'DB problems'));
+$api_response_code = array(0 => array('HTTP Response' => 400, 
+'Message' => 'Unknown Error'), 1 => array('HTTP Response' => 200, 
+'Message' => 'Success'), 2 => array('HTTP Response' => 403, 
+'Message' => 'HTTPS Required'), 3 => array('HTTP Response' => 401, 
+'Message' => 'Authentication Required'), 4 => array('HTTP Response' => 401, 
+'Message' => 'Authentication Failed'), 5 => array('HTTP Response' => 404, 
+'Message' => 'Invalid Request'), 6 => array('HTTP Response' => 400, 
+'Message' => 'Invalid Response Format'), 7 => array('HTTP Response' => 400, 
+'Message' => 'DB problems'));
 
 // Set default HTTP response of 'ok' or NOK in this case
 $response['code'] = 0;
@@ -64,7 +72,7 @@ $conn = mysqli_connect($servername, $username, $password, $dbname) or die(mysqli
 $body = file_get_contents('php://input');
 $postvars = json_decode($body, true);
 
-// --- Step 1: Initialize variables and functions
+/* //----------// STEP 2: INIT VARIABLES AND FUNCTIONS //----------// */
 
 ///**
 // * Deliver HTTP Response
@@ -75,7 +83,8 @@ $postvars = json_decode($body, true);
 function deliver_response($format, $api_response) {
 
     // Define HTTP responses
-    $http_response_code = array(200 => 'OK', 400 => 'Bad Request', 401 => 'Unauthorized', 403 => 'Forbidden', 404 => 'Not Found');
+    $http_response_code = array(200 => 'OK', 400 => 'Bad Request', 
+    401 => 'Unauthorized', 403 => 'Forbidden', 404 => 'Not Found');
 
     // Set HTTP Response
     header('HTTP/1.1 ' . $api_response['status'] . ' ' . $http_response_code[$api_response['status']]);
@@ -90,7 +99,9 @@ function deliver_response($format, $api_response) {
 
         // Deliver formatted data
         echo $json_response;
-    } elseif (strcasecmp($format, 'xml') == 0) {
+    } 
+    
+    elseif (strcasecmp($format, 'xml') == 0) {
         // Set HTTP Response Content Type
         header('Content-Type: application/xml; charset=utf-8');
 
@@ -99,15 +110,15 @@ function deliver_response($format, $api_response) {
 
         // Deliver formatted data
         echo $xml_response;
-
-    } else {
+    } 
+    
+    else {
         // Set HTTP Response Content Type (This is only good at handling string data, not arrays)
         header('Content-Type: text/html; charset=utf-8');
 
         // Deliver formatted data
         echo $api_response['data'];
     }
-
     // End script process
     exit ;
 }
@@ -120,13 +131,11 @@ if (strcasecmp($_GET['m'], 'hello') == 0) {
     $authentication_required = FALSE; // om deze functie te testen is geen login nodig ...
 }
 
-// --- Step 2: Authorization
+/* //----------// STEP 2: AUTHORISATION //----------// */
 
 // Optionally require connections to be made via HTTPS
 if ($HTTPS_required && $_SERVER['HTTPS'] != 'on') {
-    $response['code'] = 2;
-    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-    $response['data'] = $api_response_code[$response['code']]['Message'];
+    HandleConnectionFailed($response, 2, $api_response_code[$response['code']]['Message']);
 
     // Return Response to browser. This will exit the script.
     deliver_response($_GET['format'], $response);
@@ -136,9 +145,7 @@ if ($HTTPS_required && $_SERVER['HTTPS'] != 'on') {
 if ($authentication_required) {
 
     if (empty($postvars['user']) || empty($postvars['password'])) {
-        $response['code'] = 3;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-        $response['data'] = $api_response_code[$response['code']]['Message'];
+        HandleConnectionFailed($response, 3, $api_response_code[$response['code']]['Message']);
 
         // Return Response to browser
         deliver_response($postvars['format'], $response);
@@ -148,22 +155,17 @@ if ($authentication_required) {
     // that should be modified for security in a production environment
     else {
         if (!$conn) {
-            $response['code'] = 7;
-            $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-            $response['data'] = mysqli_connect_error();
+            HandleConnectionFailed($response, 7);
 
             // Return Response to browser
             deliver_response($postvars['format'], $response);
 
         } else {
             // de login nakijken
-            $lQuery = "select * FROM users where NAME like '" . $postvars['name'] . "' and PW like '" . $postvars['password'] . "'";
-            $result = $conn -> query($lQuery);
+            $result = ReturnSimpleOutputQuery("select * FROM users where NAME like '" . $postvars['name'] . "' and PW like '" . $postvars['password'] . "'");
             $rows = array();
             if (!$result) {
-                $response['code'] = 7;
-                $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-                $response['data'] = mysqli_connect_error();
+                HandleConnectionFailed($response, 7);
 
                 // Return Response to browser
                 deliver_response($postvars['format'], $response);
@@ -173,9 +175,7 @@ if ($authentication_required) {
                     $rows[] = $row;
                 }
                 if (count($rows) == 0) {
-                    $response['code'] = 4;
-                    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-                    $response['data'] = $api_response_code[$response['code']]['Message'];
+                    HandleConnectionSuccess($response, 4, $api_response_code[$response['code']]['Message']);
 
                     // Return Response to browser
                     deliver_response($postvars['format'], $response);
@@ -185,24 +185,21 @@ if ($authentication_required) {
     }
 }
 
-// --- Step 3: Process Request
+/* //----------// STEP 2: PROCESS REQUEST //----------// */
 
-// Method A: Say Hello to the API
+// ---------- (1) Hello API ---------- //
 if (strcasecmp($_GET['m'], 'hello') == 0) {
-    $response['code'] = 1;
-    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-    $response['data'] = 'Hello World';
+    HandleConnectionSuccess($response, 1, 'Hello World');
 }
 
-// --- login
+// ---------- (2) User Login ---------- //
 if (strcasecmp($_GET['m'], 'login') == 0) {
 
     if (!$conn) {
-        HandleConnectionFailure($response);
+        HandleConnectionFailed($response, 0);
 
     } else {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        HandleConnectionSuccess($response, 1);
         // de login nakijken
         // let op : we halen deze uit $postvars ipv uit $_POST, wat je online meer zal tegenkomen.
         $lQuery = "select * FROM users where NAME like '" . $postvars['name'] . "' and PW like '" . $postvars['password'] . "'";
@@ -216,134 +213,126 @@ if (strcasecmp($_GET['m'], 'login') == 0) {
                 $rows[] = $row;
             }
             if (count($rows) > 0) {
-                $response['code'] = 1;
-                $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-                $response['data'] = $rows[0];
+                HandleConnectionSuccess($response, 1, $rows[0]);
             } else {
-                $response['code'] = "4";
-                $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-                $response['data'] = $api_response_code[$response['code']]['Message'];
+                HandleConnectionFailed($response, 4, $api_response_code[$response['code']]['Message']);
             }
         }
     }
 }
 
 
-// --- get the time of the server!
+// ---------- (3) Get ServerTime ---------- //
 if (strcasecmp($_GET['m'], 'getTime') == 0) {
 
     if (!$conn) {
-        HandleConnectionFailure($response);
+        HandleConnectionFailed($response, 0);
 
     } else {
-        $response['code'] = 1;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        HandleConnectionSuccess($response, 1);
         // het tijdstip van de server opvragen (volgens de db), zodat we kunnen
         // synchroniseren met bvb onze eigen app.
-        $sql = "select now() as servertime";
-        $result = $conn -> query($sql);
-        $rows = array();
-        while ($row = $result -> fetch_assoc()) {
-            $rows[] = $row;
-        }
-        $response['data'] = $rows[0];
+        HandleSimpleOutputQuery('select now() as servertime', 1, true);
     }
-
 }
 
-// --- som producten
+// ---------- (4) Count Producten ---------- //
 if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
 
     if (!$conn) {
-        HandleConnectionFailure($response);
+        HandleConnectionFailed($response, 0);
 
     } else {
-        $response['code'] = 1;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        HandleConnectionSuccess($response, 1);
         // het tijdstip van de server opvragen (volgens de db), zodat we kunnen
         // synchroniseren met bvb onze eigen app.
-        $sql = 'select Count(*) as productSom FROM producten';
-        $result = $conn -> query($sql);
-        $rows = array();
-        while ($row = $result -> fetch_assoc()) {
-            $rows[] = $row;
-        }
-        $response['data'] = $rows[0];
+        HandleSimpleOutputQuery('select Count(*) as productSom FROM producten', 1, true);
     }
 }
 
-// --- productenlijst
+// ---------- (5) List Producten ---------- //
 if (strcasecmp($_GET['m'], 'getProducten') == 0) {
 
     if (!$conn) {
-        HandleConnectionFailure($response);
+        HandleConnectionFailed($response, 0);
 
     } else {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        HandleConnectionSuccess($response, 1);
         // de login nakijken
         // @FIXME : nakijken of hier niets moet gedaan worden met deze input : in welk formaat is dit?
         // vooral met speciale tekens zoals in Björn moet ik opletten (op deze server :-/)
-        $lQuery = "select * FROM producten";
-        $result = $conn -> query($lQuery);
-        $rows = array();
-        if (!$result) {
-            $response['data'] = "db error";
-        } else {
-
-            while ($row = $result -> fetch_assoc()) {
-                $rows[] = $row;
-            }
-            
-            $response['code'] = 1;
-            $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-            $response['data'] = $rows;
-        }
+        HandleSimpleOutputQuery("select * FROM producten", 1);
     }
 }
 
-// Create and Get Product
+// ---------- (1) Insert & Get Product ---------- //
 if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
 
     if (!$conn) {
-        HandleConnectionFailure($response);
+        HandleConnectionFailed($response, 0);
 
     } else {
-        $response['code'] = 0;
-        $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+        HandleConnectionSuccess($response, 1);
         
-        $lQuery = "Insert into Producten (Omschrijving, Prijs) Values ('" . $postvars['prodOmschr'] . "','" . $postvars['prodPrijs'] . "')";
-        $conn->query($lQuery);
+        HandleSimpleInputQuery("Insert into Producten (Omschrijving, Prijs) Values ('" . $postvars['prodOmschr'] . "','" . $postvars['prodPrijs'] . "')");
 
-        $lQuery = "select * FROM producten";
-        $result = $conn -> query($lQuery);
-        $rows = array();
-        if (!$result) {
-            $response['data'] = "db error";
-        } 
-        else {
-            while ($row = $result -> fetch_assoc()) {
-                $rows[] = $row;
-            }
-            $response['code'] = 1;
-            $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-            $response['data'] = $rows;
+        HandleSimpleOutputQuery("select * FROM producten", 1);
+    }
+}
+
+// ---------- (X) Abstracted Logic ---------- //
+function ReturnSimpleOutputQuery($lQuery) {
+    return $GLOBALS['conn'] -> query($lQuery);
+}
+function HandleSimpleOutputQuery($lQuery, $codeAtSuccess, $singleResultMode = false){
+    $result = $GLOBALS['conn'] -> query($lQuery);
+    $rows = array();
+    if (!$result) {
+        $GLOBALS['response']['data'] = "db error";
+    } 
+    else {
+        while ($row = $result -> fetch_assoc()) {
+            $rows[] = $row;
+        }
+        HandleConnectionSuccess($GLOBALS['response'], $codeAtSuccess, ($singleResultMode?$rows[0]:$rows));
+    }
+}
+function HandleSimpleInputQuery($lQuery){
+    $GLOBALS['conn']->query($lQuery);
+}
+function HandleConnectionFailed($response, $data){
+    $response['code'] = 0;
+    $response['status'] = $GLOBALS['api_response_code'][$response['code']]['HTTP Response'];
+    $response['data'] = $data;
+}
+
+function HandleConnectionSuccess($response, $code=1, $responseData=null){
+    //https://stackoverflow.com/questions/1953857/fatal-error-cannot-redeclare-function
+    //https://www.php.net/manual/en/functions.variable-functions.php
+    //https://www.designcise.com/web/tutorial/whats-the-difference-between-null-coalescing-operator-and-ternary-operator-in-php
+
+    if (!function_exists('IsNull') && !function_exists('IsNotNull')){
+        function IsNull(){
+            
+        }
+        function IsNotNull(){
+            
         }
     }
     
+    $response['code'] = $code;
+    $response['status'] = $GLOBALS['api_response_code'][$response['code']]['HTTP Response'];
+    ($execute = ($responseData==null)?'IsNull':'IsNotNull')($responseData);
+
+    if ($responseData == null){
+        $GLOBALS['response']['data'] = $responseData;
+    }
 }
 
-function HandleConnectionFailure($response){
-    $response['code'] = 0;
-    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
-    $response['data'] = mysqli_connect_error();
-}
-
-
-// --- Step 3.99: close the DB connection
+/* //----------// STEP 3: CLOSE DB CONNECTION //----------// */
 mysqli_close($conn);
-// --- Step 4: Deliver Response
 
-// Return Response to browser
+/* //----------// STEP 2: DELIVER RESPONSE //----------// */
 deliver_response($postvars['format'], $response);
+
 ?>

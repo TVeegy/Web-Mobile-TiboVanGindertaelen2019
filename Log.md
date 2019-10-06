@@ -36,4 +36,5 @@
 * Security-measures implementeren waar nodig  
 * Functionaliteit en Core-code scheiden en naar verschillende bestanden overhevelen !next  
 
-# Totale duur : (10u50+X) uur (week1: 4u les inhalen + 4u werk + week2: 4u werk --- Deficit bijna opgehaald)
+# (week1: 4u les inhalen + 4u werk + week2: 4u werk --- Deficit bijna opgehaald)
+# Totale duur : (10u50+X) uur 

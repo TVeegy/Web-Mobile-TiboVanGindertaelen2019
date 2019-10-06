@@ -15,6 +15,11 @@
 * Versimpelen Code: 2u30  
 * Comprimeren gebruikte bronnen en nieuwe PHP-kennis (zie Research): 0u10  
 * Herschrijven bestaande commentaren en toevoegen nieuwe commentaren: 0u30  
+### Zondag 6/10: 2u  
+* Afwerking (bugfixes) huidige PHP-functionaliteiten  
+* Corrigeren SQL Syntaxfout in query (laatst aangemaakt prod opvragen)  
+* Abstraheren logica rond Eventhandlers
+  * 2D Array (control id + function reference) --> for-loop
  
 ## TODO
 * Automatisatie optelling uren log (mss alternatief document-type)  

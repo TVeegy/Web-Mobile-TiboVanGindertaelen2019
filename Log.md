@@ -15,8 +15,8 @@
 * Versimpelen Code: 2u30  
 * Comprimeren gebruikte bronnen en nieuwe PHP-kennis (zie Research): 0u10  
 * Herschrijven bestaande commentaren en toevoegen nieuwe commentaren: 0u30  
-### Zondag 6/10: 2u  
-* Afwerking (bugfixes) huidige functionaliteiten  
+### Zondag 6/10: 2u10  
+* Afwerking (bugfixes) huidige functionaliteiten: 2u  
   * Corrigeren SQL Syntaxfout in query (laatst aangemaakt prod opvragen)  
   * PHP Kleine aanpassingen (structuur, kleine bugfixes)
   * Abstraheren logica rond Eventhandlers
@@ -39,4 +39,4 @@
 * Functionaliteit en Core-code scheiden en naar verschillende bestanden overhevelen !next  
 
 ## (W1: 4u les inhalen + 4u werk) + (W2: 4u werk) ===> Deficit bijna opgehaald
-# &#x1F538; Totale duur : (10u50+X) uur 
+# &#x1F538; Totale duur : (11u+X) uur 

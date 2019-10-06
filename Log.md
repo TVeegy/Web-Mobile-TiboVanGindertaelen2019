@@ -3,7 +3,7 @@
 * Voorbereiding lessen : 0u30
   * Installatie XAMPP : 0u30
 
-## Week 2 - 10u20 uur
+## Week 2 - 10u20 uur (Aanwezig, 4u les)
 ### Zaterdag 5/10: 8u20
 * Afwerking oefening les : 1 uur (Som Producten op Server)  
 * Code-sessie: 3u10  

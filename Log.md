@@ -1,9 +1,9 @@
 # Logboek Web & Mobile - Tibo Van Gindertaelen
-## Week 1 - 0.5 uur (Ziekte, eerste les gemist)
+## Week 1 - 0u30 uur (Ziekte, eerste les gemist)
 * Voorbereiding lessen : 0u30
   * Installatie XAMPP : 0u30
 
-## Week 2 - X uur
+## Week 2 - 10u20 uur
 ### Zaterdag 5/10: 8u20
 * Afwerking oefening les : 1 uur (Som Producten op Server)  
 * Code-sessie: 3u10  
@@ -20,6 +20,12 @@
 * Corrigeren SQL Syntaxfout in query (laatst aangemaakt prod opvragen)  
 * Abstraheren logica rond Eventhandlers
   * 2D Array (control id + function reference) --> for-loop
+
+## Week 3 - X uur
+### Maandag 7/10: Xu  
+### Woensdag 9/10: Xu  
+### Zaterdag 12/10: Xu  
+### Zondag 13/10: Xu  
  
 ## TODO
 * Automatisatie optelling uren log (mss alternatief document-type)  
@@ -30,4 +36,4 @@
 * Security-measures implementeren waar nodig  
 * Functionaliteit en Core-code scheiden en naar verschillende bestanden overhevelen !next  
 
-# Totale duur : (0.5+X) uur
+# Totale duur : (10u50+X) uur (week1: 4u les inhalen + 4u werk + week2: 4u werk --- Deficit bijna opgehaald)

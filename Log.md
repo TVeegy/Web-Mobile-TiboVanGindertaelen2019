@@ -36,7 +36,8 @@
 * Eigen server in gebruik nemen (Heb al een GoDaddy Account met hosting)  
 * JavaDoc verzorgen  
 * Security-measures implementeren waar nodig  
-* Functionaliteit en Core-code scheiden en naar verschillende bestanden overhevelen !next  
+* <i><b><u>Functionaliteit en Core-code scheiden en naar verschillende bestanden overhevelen !next</u></b></i>  
+* Gekleurde symbolen (MD) aligneren met koptekst
 
 ## (W1: 4u les inhalen + 4u werk) + (W2: 4u werk) ===> Deficit bijna opgehaald
 # &#x1F538; Totale duur : (11u+X) uur 

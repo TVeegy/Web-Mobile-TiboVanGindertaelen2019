@@ -173,8 +173,8 @@ if ($authentication_required) {
             } 
             
             // Initialise as array and fill with rows
-            $rows = array();
             else {
+                $rows = array();
                 $response['data'] = "ok";
                 while ($row = $result -> fetch_assoc()) {
                     $rows[] = $row;
@@ -200,10 +200,10 @@ if (strcasecmp($_GET['m'], 'hello') == 0) {
 // ---------- (2) User Login ---------- //
 if (strcasecmp($_GET['m'], 'login') == 0) {
 
+    
     // Raise connection failed if no connection is made
     if (!$conn) {
         HandleConnectionFailed($response, 0);
-
     } 
     // Raise connection succesful
     else {
@@ -219,14 +219,17 @@ if (strcasecmp($_GET['m'], 'login') == 0) {
             $response['data'] = "db error";
         } 
         // Initialise as array and fill with rows
-        $rows = array();
         else {
+            $rows = array();
             while ($row = $result -> fetch_assoc()) {
                 $rows[] = $row;
             }
             // Raise connection succesful when records are found
             if (count($rows) > 0) {
                 HandleConnectionSuccess($response, 1, $rows[0]);
+                $response['code'] = 1;
+                $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+                $response['data'] = $rows[0];
             } 
             // Raise connection failed
             else {
@@ -242,7 +245,6 @@ if (strcasecmp($_GET['m'], 'getTime') == 0) {
     // Raise connection failed
     if (!$conn) {
         HandleConnectionFailed($response, 0);
-
     } 
     // Raise connection succesful
     else {
@@ -256,7 +258,6 @@ if (strcasecmp($_GET['m'], 'getProductSom') == 0) {
     // Raise connection failed
     if (!$conn) {
         HandleConnectionFailed($response, 0);
-
     } 
     // Raise connection succesful
     else {
@@ -270,7 +271,6 @@ if (strcasecmp($_GET['m'], 'getProducten') == 0) {
     // Raise connection failed
     if (!$conn) {
         HandleConnectionFailed($response, 0);
-
     } 
     // Raise connection succesful
     else {
@@ -296,7 +296,7 @@ if (strcasecmp($_GET['m'], 'createAndGetProduct') == 0) {
         HandleSimpleInputQuery("Insert into Producten (Omschrijving, Prijs) Values ('" . $postvars['prodOmschr'] . "','" . $postvars['prodPrijs'] . "')");
 
         // Read (output) the created record
-        HandleSimpleOutputQuery("sELECT TOP 1 * FROM Table ORDER BY ID DESC", 1);
+        HandleSimpleOutputQuery("sELECT * FROM Producten ORDER BY ID DESC LIMIT 1", 1);
     }
 }
 
@@ -309,11 +309,13 @@ function ReturnSimpleOutputQuery($lQuery) {
 // Handles a simple computed query, outputting data from the DB to the API and processing the result (to response)
 function HandleSimpleOutputQuery($lQuery, $codeAtSuccess, $singleResultMode = false){
     $result = $GLOBALS['conn'] -> query($lQuery);
-    $rows = array();
+    
+    //echo "handling query '".$lQuery."'";
     if (!$result) {
         $GLOBALS['response']['data'] = "db error";
     } 
     else {
+        $rows = array();
         while ($row = $result -> fetch_assoc()) {
             $rows[] = $row;
         }
@@ -345,12 +347,16 @@ function HandleConnectionSuccess($response, $code=1, $responseData=null){
         }
     }
     
-    $response['code'] = $code;
-    $response['status'] = $GLOBALS['api_response_code'][$response['code']]['HTTP Response'];
+    /*$response['code'] = 1;
+    $response['status'] = $api_response_code[$response['code']]['HTTP Response'];
+    $response['data'] = $rows[0];*/
+
+    $GLOBALS['response']['code'] = $code;
+    $GLOBALS['response']['status'] = $GLOBALS['api_response_code'][$GLOBALS['response']['code']]['HTTP Response'];
     ($execute = ($responseData==null)?'IsNull':'IsNotNull')($responseData);
 
     // Determines whether response-data is given and allows for internal handling (possible extension)
-    if ($responseData == null){
+    if ($responseData != null){
         $GLOBALS['response']['data'] = $responseData;
     }
 }

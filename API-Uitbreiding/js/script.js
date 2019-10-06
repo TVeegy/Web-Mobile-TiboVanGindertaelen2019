@@ -39,22 +39,22 @@
 				if(responseData.status < 200 || responseData.status > 299) {
 					// login faalde, boodschap weergeven
 					// Hier kan je ook een groter onderscheid maken tussen de verschillende vormen van login falen.
-					alerter("Login mislukt : deze naam/paswoord combinatie bestaat niet");
+					Alerter("Login mislukt : deze naam/paswoord combinatie bestaat niet");
 					// return, zodat de rest van de fetch niet verder uitgevoerd wordt
 					return;
 				}
         
 				// de verwerking van de data
-				var list = responseData.data;
+				let list = responseData.data;
 
 				if (Object.keys(list).length > 0) {
 					// list bevat minstens 1 property met waarde
 					list.ID = parseInt(list.ID);   
 					// alles wat via json komt, is standaard een string of een object.
 					// hier is het omzetten naar een int wel niet nodig, omdat we er niet met gaan rekenen
-					alerter("Gebruikersgevens ok : ID = " + list.ID);
+					Alerter("Gebruikersgevens ok : ID = " + list.ID);
 				} else {
-					alerter("Login failed : this login/password combination does not exist");
+					Alerter("Login failed : this login/password combination does not exist");
 				}
 			})
 			.catch(function(error) {
@@ -81,18 +81,18 @@
 			})
 			.then(function(responseData){
 				// de verwerking van de data
-				var list = responseData.data;
+				let list = responseData.data;
 
 				if (list.length > 0) {
 					// er zit minstens 1 item in list, we geven dit ook onmiddelijk weer
-					var tLijst = "<span class='rij kOdd'><span>ID</span><span>Omschrijving</span><span>Prijs</span></span>";
-					for (var i = 0; i < list.length; i++) {
+					let tLijst = "<span class='rij kOdd'><span>ID</span><span>Omschrijving</span><span>Prijs</span></span>";
+					for (let i = 0; i < list.length; i++) {
 						tLijst += "<span class='rij'><span>" + list[i].id + "</span><span>" + list[i].Omschrijving + "</span><span>" + list[i].prijs + "</span></span>";
 					}
 					tLijst += "<br>";
-					alerter(tLijst);
+					Alerter(tLijst);
 				} else {
-					alerter("Servertijd kon niet opgevraagd worden");
+					Alerter("Servertijd kon niet opgevraagd worden");
 				}
 			})
 			.catch(function(error) {
@@ -119,18 +119,18 @@
 			})
 			.then(function(responseData){
 				// de verwerking van de data
-				var list = responseData.data;
+				let list = responseData.data;
 
 				if (Object.keys(list).length > 0) {
 					// er zit slechts 1 item in de lijst, we geven dit ook onmiddelijk weer
-					alerter("Servertijd : " + list.servertime);
+					Alerter("Servertijd : " + list.servertime);
 				} else {
-					alerter("Servertijd kon niet opgevraagd worden");
+					Alerter("Servertijd kon niet opgevraagd worden");
 				}
 			})
 			.catch(function(error) {
 				// verwerk de fout
-				alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
+				Alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
 			});
 	}
 
@@ -152,18 +152,18 @@
 			})
 			.then(function(responseData){
 				// de verwerking van de data
-				var list = responseData.data;
+				let list = responseData.data;
 
 				if (Object.keys(list).length > 0) {
 					// er zit slechts 1 item in de lijst, we geven dit ook onmiddelijk weer
-					alerter("Som van producten : " + list.productSom);
+					Alerter("Som van producten : " + list.productSom);
 				} else {
-					alerter("Productensom kon niet opgevraagd worden");
+					Alerter("Productensom kon niet opgevraagd worden");
 				}
 			})
 			.catch(function(error) {
 				// verwerk de fout
-				alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
+				Alerter("<br>API Fout. Probeer later nog eens.<br>(" + error + ")");
 			});
 	}
 
@@ -188,15 +188,15 @@
 			})
 			.then(function(responseData){
 
-				var list = responseData.data;
+				let list = responseData.data;
 
 				// er zit minstens 1 item in list, we geven dit ook onmiddelijk weer
-				var tLijst = "<span class='rij kOdd'><span>ID</span><span>Omschrijving</span><span>Prijs</span></span>";
-				for (var i = 0; i < list.length; i++) {
+				let tLijst = "<span class='rij kOdd'><span>ID</span><span>Omschrijving</span><span>Prijs</span></span>";
+				for (let i = 0; i < list.length; i++) {
 					tLijst += "<span class='rij'><span>" + list[i].id + "</span><span>" + list[i].Omschrijving + "</span><span>" + list[i].prijs + "</span></span>";
 				}
 				tLijst += "<br>";
-				alerter(tLijst);
+				Alerter(tLijst);
 			})
 			.catch(function(error) {
 				// verwerk de fout
@@ -205,27 +205,26 @@
 	}
 
 	// EventListeners
-	document.getElementById("btnTestLogin").addEventListener("click", function(){
-		getApiGebruiker();
-	});
-  
-	document.getElementById("btnGetTijd").addEventListener("click", function(){
+	(function AddEventlisteners(){
+		
+		let eventlistenerData = [
+			["btnTestLogin", getApiGebruiker],
+			["btnGetTijd", getApiTijd],
+			["btnGetProducten", getApiProducten],
+			["btnGetProdSom", getApiProductSom],
+			["btnAddProd", setAPIProduct]
+		  ];
+
+		for(let i = 0; i < eventlistenerData.length; i++){
+			document.getElementById(`${eventlistenerData[i][0]}`).addEventListener("click", eventlistenerData[i][1]);
+		}
+
 		getApiTijd();
-	});
-
-	document.getElementById("btnGetProducten").addEventListener("click", function(){
-		getApiProducten();
-	});
-
-	document.getElementById("btnGetProdSom").addEventListener("click", function(){
-		getApiProductSom();
-	});
-	document.getElementById("btnAddProd").addEventListener("click", function(){
-		setAPIProduct();
-	});
+	})();
+	
   
 	// helper functies
-	function alerter(message) {
+	let Alerter = function(message) {
 		alertEl.innerHTML = message;
 	}
 })();

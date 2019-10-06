@@ -16,10 +16,12 @@
 * Comprimeren gebruikte bronnen en nieuwe PHP-kennis (zie Research): 0u10  
 * Herschrijven bestaande commentaren en toevoegen nieuwe commentaren: 0u30  
 ### Zondag 6/10: 2u  
-* Afwerking (bugfixes) huidige PHP-functionaliteiten  
-* Corrigeren SQL Syntaxfout in query (laatst aangemaakt prod opvragen)  
-* Abstraheren logica rond Eventhandlers
-  * 2D Array (control id + function reference) --> for-loop
+* Afwerking (bugfixes) huidige functionaliteiten  
+  * Corrigeren SQL Syntaxfout in query (laatst aangemaakt prod opvragen)  
+  * PHP Kleine aanpassingen (structuur, kleine bugfixes)
+  * Abstraheren logica rond Eventhandlers
+    * 2D Array (control id + function reference) --> for-loop  
+* MD Styling: 0u10
 
 ## &#x1F539; Week 3 - X uur
 ### Maandag 7/10: Xu  
